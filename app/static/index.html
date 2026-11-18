@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kyrgyzstan Tours</title>
+<link hrefcd C:\Users\Lenovo\Downloads\kg-tours="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--lake:#0E3B4F;--snow:#F6F8F9;--felt:#B83A2E;--ink:#12242C;--mute:#5B6B72;--line:#D8E0E3}
+@media (prefers-color-scheme:dark){:root{--snow:#0C1A20;--ink:#E8EEF0;--mute:#9AABB2;--line:#223841}}
+*{box-sizing:border-box}
+body{margin:0;font:400 16px/1.55 Manrope,system-ui,sans-serif;background:var(--snow);color:var(--ink)}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 5vw}
+.logo{font:600 15px Unbounded,sans-serif}
+.langs button{background:none;border:1px solid var(--line);color:var(--ink);padding:6px 10px;border-radius:6px;cursor:pointer;font:600 13px Manrope}
+.langs button[aria-pressed=true]{background:var(--lake);color:#fff;border-color:var(--lake)}
+.hero{position:relative;background:linear-gradient(90deg,rgba(8,35,48,.82),rgba(8,35,48,.25)),url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2000&q=85") center 48%/cover,var(--lake);color:#fff;padding:12vh 5vw 22vh;overflow:hidden}
+.hero h1{font:600 clamp(32px,6vw,68px)/1.05 Unbounded,sans-serif;margin:0 0 16px;max-width:14ch}
+.hero p{max-width:46ch;opacity:.85;margin:0 0 28px;font-size:18px}
+.btn{background:var(--felt);color:#fff;border:0;padding:12px 22px;border-radius:8px;font:800 15px Manrope,sans-serif;cursor:pointer;text-decoration:none;display:inline-block}
+.btn:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #F2B84B;outline-offset:2px}
+.ridge{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:20vh;min-height:110px}
+main{padding:40px 5vw 80px}
+h2{font:600 26px Unbounded,sans-serif;margin:0 0 24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px}
+.card{border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.thumb{height:170px;position:relative;background-position:center;background-size:cover}
+.thumb svg{position:absolute;bottom:0;width:100%;height:70%}
+.body{padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.body h3{margin:0;font-size:19px}
+.body p{margin:0;color:var(--mute);font-size:15px;flex:1}
+.meta{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.price{font-weight:800;font-size:20px}.price small{font-weight:400;color:var(--mute);font-size:13px}
+dialog{border:0;border-radius:14px;padding:26px;width:min(440px,92vw);background:var(--snow);color:var(--ink)}
+dialog::backdrop{background:rgba(5,20,28,.6)}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+input,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:transparent;color:inherit}
+.row{display:flex;gap:12px}.row>div{flex:1}
+.actions{display:flex;gap:10px;margin-top:18px}
+.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+#msg{margin-top:12px;font-weight:600}
+@media (prefers-reduced-motion:no-preference){.hero h1{animation:rise .7s ease-out}@keyframes rise{from{opacity:0;transform:translateY(14px)}}}
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">KG Tours</span>
+  <div class="langs" role="group" aria-label="Language">
+    <button data-l="ky">КЫР</button><button data-l="en">EN</button><button data-l="ru">РУС</button><button data-l="es">ES</button>
+  </div>
+</header>
+
+<section class="hero">
+  <h1 data-t="h1"></h1>
+  <p data-t="sub"></p>
+  <a class="btn" href="#tours" data-t="cta"></a>
+  <svg class="ridge" viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 200V120l140-70 90 60 150-90 130 100 120-60 140 90 110-80 160 70 160-50v150z" fill="#1B5570" opacity=".6"/>
+    <path d="M0 200V150l110-40 100 50 160-80 140 90 150-60 130 70 140-50 130 60 140-40v150z" fill="var(--snow)"/>
+  </svg>
+</section>
+
+<main id="tours">
+  <h2 data-t="toursTitle"></h2>
+  <div class="grid" id="grid"></div>
+</main>
+
+<dialog id="dlg">
+  <h3 id="dTitle" style="margin:0"></h3>
+  <div id="dForm">
+    <label for="name" data-t="name"></label><input id="name" autocomplete="name">
+    <label for="contact" data-t="contact"></label><input id="contact">
+    <div class="row">
+      <div><label for="date" data-t="date"></label><input id="date" type="date"></div>
+      <div><label for="people" data-t="people"></label><input id="people" type="number" min="1" max="50" value="2"></div>
+    </div>
+    <label for="comment" data-t="comment"></label><textarea id="comment" rows="3"></textarea>
+    <div class="actions">
+      <button class="btn" id="send" data-t="send"></button>
+      <button class="btn ghost" id="close" data-t="close"></button>
+    </div>
+  </div>
+  <div id="msg" role="status"></div>
+</dialog>
+
+<script>
+const I18N = {
+  ky:{h1:"Кыргызстанды ачыңыз",sub:"Тоо, көл жана жайлоолор аркылуу жолдор. Өтүнмө калтырыңыз — биз байланышабыз.",cta:"Турларды көрүү",toursTitle:"Турлар",days:"күн",from:"баштап",book:"Брондоо",name:"Аты-жөнүңүз",contact:"Телефон же Telegram",date:"Башталышы",people:"Адам саны",comment:"Комментарий",send:"Жөнөтүү",close:"Жабуу",ok:"Өтүнмөңүз кабыл алынды. Биз жакында байланышабыз.",err:"Ката кетти. Талаалардын толтурулганын текшерип, кайра аракет кылыңыз."},
+  en:{h1:"Discover Kyrgyzstan",sub:"Routes through mountains, lakes and summer pastures. Send a request and we will get back to you.",cta:"See tours",toursTitle:"Tours",days:"days",from:"from",book:"Book",name:"Your name",contact:"Phone or Telegram",date:"Start date",people:"Guests",comment:"Comment",send:"Send request",close:"Close",ok:"Request received. We will contact you soon.",err:"Something went wrong. Check the fields and try again."},
+  ru:{h1:"Откройте Кыргызстан",sub:"Маршруты по горам, озёрам и джайлоо. Оставьте заявку — мы свяжемся с вами.",cta:"Смотреть туры",toursTitle:"Туры",days:"дн.",from:"от",book:"Забронировать",name:"Ваше имя",contact:"Телефон или Telegram",date:"Дата начала",people:"Человек",comment:"Комментарий",send:"Отправить заявку",close:"Закрыть",ok:"Заявка принята. Мы скоро свяжемся с вами.",err:"Ошибка. Проверьте поля и попробуйте ещё раз."},
+  es:{h1:"Descubre Kirguistán",sub:"Rutas por montañas, lagos y pastos de verano. Envía tu solicitud y te contactaremos.",cta:"Ver tours",toursTitle:"Tours",days:"días",from:"desde",book:"Reservar",name:"Tu nombre",contact:"Teléfono o Telegram",date:"Fecha de inicio",people:"Personas",comment:"Comentario",send:"Enviar solicitud",close:"Cerrar",ok:"Solicitud recibida. Te contactaremos pronto.",err:"Algo salió mal. Revisa los campos e inténtalo de nuevo."}
+};
+const $ = s => document.querySelector(s);
+const TOUR_IMAGES = {
+  "issyk-kul":"https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=900&q=80",
+  "song-kol":"https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=80",
+  "ala-kul":"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=80",
+  "jeti-oguz":"https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=80"
+};
+const tourImage = slug => TOUR_IMAGES[slug] || TOUR_IMAGES["ala-kul"];
+let lang = localStorage.getItem("lang") || ({ky:"ky",ru:"ru",es:"es"}[navigator.language.slice(0,2)] || "en");
+let tours = [], current = null;
+
+function render(){
+  const t = I18N[lang];
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-t]").forEach(el => el.textContent = t[el.dataset.t]);
+  document.querySelectorAll(".langs button").forEach(b => b.setAttribute("aria-pressed", b.dataset.l === lang));
+  $("#grid").innerHTML = tours.map(x => `
+    <article class="card">
+      <div class="thumb" style="background-color:${x.color};background-image:linear-gradient(180deg,rgba(8,28,38,.02),rgba(8,28,38,.3)),url('${tourImage(x.slug)}')">
+        <svg viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0 80V50l40-30 30 25 35-35 40 40 25-20 30 25v25z" fill="rgba(255,255,255,.22)"/></svg>
+      </div>
+      <div class="body">
+        <h3>${x.title[lang]}</h3>
+        <p>${x.description[lang]}</p>
+        <div class="meta">
+          <span class="price"><small>${t.from}</small> $${x.price_usd} <small>· ${x.days} ${t.days}</small></span>
+          <button class="btn" data-id="${x.id}">${t.book}</button>
+        </div>
+      </div>
+    </article>`).join("");
+}
+
+document.querySelectorAll(".langs button").forEach(b => b.onclick = () => { lang = b.dataset.l; localStorage.setItem("lang", lang); render(); });
+$("#grid").onclick = e => {
+  const id = e.target.dataset.id; if(!id) return;
+  current = tours.find(x => x.id == id);
+  $("#dTitle").textContent = current.title[lang];
+  $("#msg").textContent = ""; $("#dForm").hidden = false;
+  $("#dlg").showModal();
+};
+$("#close").onclick = () => $("#dlg").close();
+$("#send").onclick = async () => {
+  $("#send").disabled = true;
+  try{
+    const r = await fetch("/api/bookings", {method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({tour_id: current.id, name: $("#name").value.trim(), contact: $("#contact").value.trim(),
+        start_date: $("#date").value || null, people: +$("#people").value || 1,
+        comment: $("#comment").value || null, lang})});
+    if(!r.ok) throw 0;
+    $("#msg").textContent = I18N[lang].ok; $("#dForm").hidden = true;
+  }catch{ $("#msg").textContent = I18N[lang].err; }
+  $("#send").disabled = false;
+};
+
+fetch("/api/tours").then(r => r.json()).then(d => { tours = d; render(); });
+render();
+</script>
+</body>
+</html>
