@@ -24,7 +24,8 @@ kg-tours/
     ├── main.py           # API, Telegram, admin endpoints
     ├── admin.html        # admin panel (password protected)
     └── static/
-        └── index.html    # public site
+        ├── index.html    # public site
+        └── admin-login.html
 ```
 
 ## Quick start
@@ -43,7 +44,7 @@ kg-tours/
    docker compose up -d --build
    ```
 
-5. Open the site at http://localhost:8000 and the admin panel at http://localhost:8000/admin.
+5. Open the site at http://localhost:8000. Use the **Admin** link on the homepage to sign in.
 
 ## Configuration
 
@@ -53,11 +54,10 @@ Put these values in `.env`. Use one line per variable, with no spaces around `=`
 DB_PASSWORD=choose_a_strong_password
 TG_BOT_TOKEN=123456789:AAHxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 TG_CHAT_ID=123456789
-ADMIN_USER=admin
 ADMIN_PASSWORD=choose_a_long_password
 ```
 
-If `ADMIN_USER` or `ADMIN_PASSWORD` is empty, the admin panel is closed to everyone. If the Telegram values are empty, requests are still saved to the database but no message is sent.
+If `ADMIN_PASSWORD` is empty, admin sign-in is disabled. If the Telegram values are empty, requests are still saved to the database but no message is sent. Never commit `.env`.
 
 ## Telegram bot setup
 
@@ -79,12 +79,26 @@ If `ADMIN_USER` or `ADMIN_PASSWORD` is empty, the admin panel is closed to every
 
 ## Admin panel
 
-Open http://localhost:8000/admin and sign in with `ADMIN_USER` and `ADMIN_PASSWORD`.
+Use the **Admin** link on the homepage, then sign in with `ADMIN_PASSWORD`. The signed, HTTP-only session lasts 8 hours.
 
 - **Requests:** see every booking request and change its status (new, contacted, confirmed, cancelled).
 - **Tours:** add a tour, edit one, or hide it from the site. Titles and descriptions are required in all four languages.
 
 Tours are never deleted, so old requests always keep their tour. Hide a tour instead.
+
+## Deploy to Render
+
+The repository includes a `render.yaml` Blueprint for the FastAPI app and PostgreSQL database.
+
+1. Push this repository to GitHub.
+2. In Render, choose **New → Blueprint**, connect `mcrtee/kg_tours`, and deploy the Blueprint from the repository root.
+3. Enter a strong `ADMIN_PASSWORD` when prompted. Render builds the Docker image, creates the database, and assigns its connection URL.
+4. After deployment, open the Render service URL. Use **Admin** on the homepage to sign in.
+5. To enable Telegram notifications, add `TG_BOT_TOKEN` and `TG_CHAT_ID` as environment variables in the Render web service and redeploy.
+
+The Blueprint uses Render's free plans for a demo. Check Render's current free-tier limits before relying on it for real bookings; use a persistent database plan for production data.
+
+GitHub Pages cannot run this project's FastAPI backend or PostgreSQL database. Deploy the full app on Render (or another server host) rather than Pages to keep booking and admin features working.
 
 ## Connecting to the database (DBeaver)
 
@@ -120,14 +134,14 @@ Port 5433 is used on purpose: if you have another PostgreSQL installed on your c
 | POST   | `/api/admin/tours`             | admin | Create a tour               |
 | PUT    | `/api/admin/tours/{id}`        | admin | Update a tour               |
 
-Admin endpoints use HTTP Basic authentication.
+Admin endpoints require the signed admin session cookie.
 
 ## Database
 
 - `tours`: `title` and `description` are JSONB with keys `ky`, `en`, `ru`, `es`.
 - `bookings`: linked to `tours`, stores name, contact, date, number of guests, comment, site language, status and creation time.
 
-`db/init.sql` runs only when the database is created for the first time. The `status` column is added automatically by the app on startup.
+The app applies `db/init.sql` on startup. It is safe to run on an existing database; the `status` column is also added automatically.
 
 ## Useful commands
 
