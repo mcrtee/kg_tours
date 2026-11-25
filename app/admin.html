@@ -75,6 +75,7 @@ input,textarea,select{width:100%;padding:10px;border:1px solid var(--line);borde
       <button data-l="ky">КЫР</button><button data-l="en">EN</button><button data-l="ru">РУС</button><button data-l="es">ES</button>
     </div>
     <a class="link-btn" href="/">Открыть сайт</a>
+    <button class="link-btn" id="logout" type="button">Выйти</button>
   </div>
 </header>
 
@@ -170,6 +171,10 @@ async function api(url, method = "GET", body) {
     options.body = JSON.stringify(body);
   }
   const r = await fetch(url, options);
+  if (r.status === 401) {            // вход истёк — возвращаем на главную
+    location.href = "/";
+    throw new Error("401 Unauthorized");
+  }
   if (!r.ok) throw new Error(r.status + " " + await r.text());
   return r.json();
 }
@@ -337,6 +342,10 @@ $("#activeTours").onclick = () => { filter = "active"; updateFilter(); };
 $("#hiddenTours").onclick = () => { filter = "hidden"; updateFilter(); };
 $("#resetForm").onclick = resetForm;
 $("#closeDialog").onclick = () => $("#tourDialog").close();
+$("#logout").onclick = async () => {
+  await fetch("/api/admin/logout", {method:"POST"});
+  location.href = "/";
+};
 function updateFilter() {
   for (const [id,value] of [["allTours","all"],["activeTours","active"],["hiddenTours","hidden"]])
     $("#" + id).setAttribute("aria-selected", String(filter === value));

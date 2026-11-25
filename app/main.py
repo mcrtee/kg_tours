@@ -1,20 +1,17 @@
-import html, logging, os
+import asyncio, hashlib, hmac, html, logging, os, secrets, time
 from contextlib import asynccontextmanager
 from datetime import date
+from pathlib import Path
+from typing import Literal
 
 import httpx
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from psycopg.rows import dict_row
+from psycopg.types.json import Jsonb
 from psycopg_pool import AsyncConnectionPool
 from pydantic import BaseModel, Field
-
-import secrets
-from typing import Literal
-from fastapi import Depends
-from fastapi.responses import FileResponse
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from psycopg.types.json import Jsonb
 
 pool = AsyncConnectionPool(os.environ["DATABASE_URL"], open=False,
                            kwargs={"row_factory": dict_row})
@@ -23,6 +20,8 @@ pool = AsyncConnectionPool(os.environ["DATABASE_URL"], open=False,
 async def lifespan(_):
     await pool.open()
     async with pool.connection() as c:
+        await c.execute(Path(__file__).with_name("init.sql").read_text(encoding="utf-8"),
+                        prepare=False)
         await c.execute("ALTER TABLE bookings ADD COLUMN IF NOT EXISTS "
                         "status TEXT NOT NULL DEFAULT 'new'")
     yield
@@ -83,15 +82,24 @@ async def book(b: Booking):
     return {"ok": True, "id": row["id"]}
 
 # ---------- ADMIN ----------
-security = HTTPBasic()
+SESSION_HOURS = 8
 
-def admin(c: HTTPBasicCredentials = Depends(security)):
-    u, p = os.getenv("ADMIN_USER"), os.getenv("ADMIN_PASSWORD")
-    ok = bool(u and p) and \
-        secrets.compare_digest(c.username.encode(), u.encode()) and \
-        secrets.compare_digest(c.password.encode(), p.encode())
-    if not ok:
-        raise HTTPException(401, "Unauthorized", headers={"WWW-Authenticate": "Basic"})
+def _sign(exp: int) -> str:
+    key = (os.getenv("ADMIN_PASSWORD") or "").encode()
+    return hmac.new(key, f"admin:{exp}".encode(), hashlib.sha256).hexdigest()
+
+def admin(request: Request):
+    pw = os.getenv("ADMIN_PASSWORD")
+    try:
+        exp_s, sig = request.cookies.get("admin", "").split(".", 1)
+        exp = int(exp_s)
+    except ValueError:
+        raise HTTPException(401, "Unauthorized")
+    if not pw or exp < time.time() or not hmac.compare_digest(sig, _sign(exp)):
+        raise HTTPException(401, "Unauthorized")
+
+class Login(BaseModel):
+    password: str
 
 class TourIn(BaseModel):
     slug: str = Field(min_length=2)
@@ -106,8 +114,36 @@ class TourIn(BaseModel):
 class StatusIn(BaseModel):
     status: Literal["new", "contacted", "confirmed", "cancelled"]
 
-@app.get("/admin", dependencies=[Depends(admin)])
-async def admin_page():
+@app.post("/api/admin/login")
+async def admin_login(l: Login, response: Response):
+    pw = os.getenv("ADMIN_PASSWORD")
+    if not pw or not secrets.compare_digest(l.password.encode(), pw.encode()):
+        await asyncio.sleep(0.7)  # замедляем подбор пароля
+        raise HTTPException(401, "Wrong password")
+    exp = int(time.time()) + SESSION_HOURS * 3600
+    response.set_cookie("admin", f"{exp}.{_sign(exp)}", max_age=SESSION_HOURS * 3600,
+                        httponly=True, samesite="lax", path="/")
+    return {"ok": True}
+
+@app.post("/api/admin/logout")
+async def admin_logout(response: Response):
+    response.delete_cookie("admin", path="/")
+    return {"ok": True}
+
+@app.get("/admin/login")
+async def admin_login_page(request: Request):
+    try:
+        admin(request)
+    except HTTPException:
+        return FileResponse("static/admin-login.html")
+    return RedirectResponse("/admin")
+
+@app.get("/admin")
+async def admin_page(request: Request):
+    try:
+        admin(request)
+    except HTTPException:
+        return RedirectResponse("/")
     return FileResponse("admin.html")
 
 @app.get("/api/admin/bookings", dependencies=[Depends(admin)])

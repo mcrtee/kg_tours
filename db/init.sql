@@ -1,4 +1,4 @@
-CREATE TABLE tours (
+CREATE TABLE IF NOT EXISTS tours (
   id SERIAL PRIMARY KEY,
   slug TEXT UNIQUE NOT NULL,
   title JSONB NOT NULL,        -- {"ky":"","en":"","ru":"","es":""}
@@ -9,7 +9,7 @@ CREATE TABLE tours (
   color TEXT DEFAULT '#0E3B4F',
   active BOOLEAN DEFAULT true
 );
-CREATE TABLE bookings (
+CREATE TABLE IF NOT EXISTS bookings (
   id SERIAL PRIMARY KEY,
   tour_id INT NOT NULL REFERENCES tours(id),
   name TEXT NOT NULL,
@@ -36,4 +36,5 @@ INSERT INTO tours (slug,title,description,days,price_usd,region,color) VALUES
 ('jeti-oguz',
  '{"ky":"Жети-Өгүз жана Жомок","en":"Jeti-Oguz & Fairytale Canyon","ru":"Джеты-Огуз и Сказка","es":"Jeti-Oguz y Cañón del Cuento"}',
  '{"ky":"Кызыл аска жана Жомок капчыгайы — эки күндүк жеңил саякат.","en":"Red rocks and a canyon of strange shapes: an easy two-day trip.","ru":"Красные скалы и каньон причудливых форм: лёгкая поездка на два дня.","es":"Rocas rojas y un cañón de formas extrañas: un viaje fácil de dos días."}',
- 2,150,'Issyk-Kul','#B5622F');
+ 2,150,'Issyk-Kul','#B5622F')
+ON CONFLICT (slug) DO NOTHING;

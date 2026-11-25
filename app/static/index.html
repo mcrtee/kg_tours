@@ -12,6 +12,7 @@
 body{margin:0;font:400 16px/1.55 Manrope,system-ui,sans-serif;background:var(--snow);color:var(--ink)}
 header{display:flex;justify-content:space-between;align-items:center;padding:16px 5vw}
 .logo{font:600 15px Unbounded,sans-serif}
+.admin-link{border:1px solid var(--line);border-radius:6px;padding:6px 10px;color:var(--ink);font-size:13px;font-weight:600;text-decoration:none}
 .langs button{background:none;border:1px solid var(--line);color:var(--ink);padding:6px 10px;border-radius:6px;cursor:pointer;font:600 13px Manrope}
 .langs button[aria-pressed=true]{background:var(--lake);color:#fff;border-color:var(--lake)}
 .hero{position:relative;background:linear-gradient(90deg,rgba(8,35,48,.82),rgba(8,35,48,.25)),url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2000&q=85") center 48%/cover,var(--lake);color:#fff;padding:12vh 5vw 22vh;overflow:hidden}
@@ -45,6 +46,7 @@ input,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radiu
 <body>
 <header>
   <span class="logo">KG Tours</span>
+  <a class="admin-link" href="/admin/login" data-t="adminLogin"></a>
   <div class="langs" role="group" aria-label="Language">
     <button data-l="ky">КЫР</button><button data-l="en">EN</button><button data-l="ru">РУС</button><button data-l="es">ES</button>
   </div>
@@ -85,10 +87,10 @@ input,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radiu
 
 <script>
 const I18N = {
-  ky:{h1:"Кыргызстанды ачыңыз",sub:"Тоо, көл жана жайлоолор аркылуу жолдор. Өтүнмө калтырыңыз — биз байланышабыз.",cta:"Турларды көрүү",toursTitle:"Турлар",days:"күн",from:"баштап",book:"Брондоо",name:"Аты-жөнүңүз",contact:"Телефон же Telegram",date:"Башталышы",people:"Адам саны",comment:"Комментарий",send:"Жөнөтүү",close:"Жабуу",ok:"Өтүнмөңүз кабыл алынды. Биз жакында байланышабыз.",err:"Ката кетти. Талаалардын толтурулганын текшерип, кайра аракет кылыңыз."},
-  en:{h1:"Discover Kyrgyzstan",sub:"Routes through mountains, lakes and summer pastures. Send a request and we will get back to you.",cta:"See tours",toursTitle:"Tours",days:"days",from:"from",book:"Book",name:"Your name",contact:"Phone or Telegram",date:"Start date",people:"Guests",comment:"Comment",send:"Send request",close:"Close",ok:"Request received. We will contact you soon.",err:"Something went wrong. Check the fields and try again."},
-  ru:{h1:"Откройте Кыргызстан",sub:"Маршруты по горам, озёрам и джайлоо. Оставьте заявку — мы свяжемся с вами.",cta:"Смотреть туры",toursTitle:"Туры",days:"дн.",from:"от",book:"Забронировать",name:"Ваше имя",contact:"Телефон или Telegram",date:"Дата начала",people:"Человек",comment:"Комментарий",send:"Отправить заявку",close:"Закрыть",ok:"Заявка принята. Мы скоро свяжемся с вами.",err:"Ошибка. Проверьте поля и попробуйте ещё раз."},
-  es:{h1:"Descubre Kirguistán",sub:"Rutas por montañas, lagos y pastos de verano. Envía tu solicitud y te contactaremos.",cta:"Ver tours",toursTitle:"Tours",days:"días",from:"desde",book:"Reservar",name:"Tu nombre",contact:"Teléfono o Telegram",date:"Fecha de inicio",people:"Personas",comment:"Comentario",send:"Enviar solicitud",close:"Cerrar",ok:"Solicitud recibida. Te contactaremos pronto.",err:"Algo salió mal. Revisa los campos e inténtalo de nuevo."}
+  ky:{h1:"Кыргызстанды ачыңыз",sub:"Тоо, көл жана жайлоолор аркылуу жолдор. Өтүнмө калтырыңыз — биз байланышабыз.",cta:"Турларды көрүү",adminLogin:"Админ",toursTitle:"Турлар",days:"күн",from:"баштап",book:"Брондоо",name:"Аты-жөнүңүз",contact:"Телефон же Telegram",date:"Башталышы",people:"Адам саны",comment:"Комментарий",send:"Жөнөтүү",close:"Жабуу",ok:"Өтүнмөңүз кабыл алынды. Биз жакында байланышабыз.",err:"Ката кетти. Талаалардын толтурулганын текшерип, кайра аракет кылыңыз."},
+  en:{h1:"Discover Kyrgyzstan",sub:"Routes through mountains, lakes and summer pastures. Send a request and we will get back to you.",cta:"See tours",adminLogin:"Admin",toursTitle:"Tours",days:"days",from:"from",book:"Book",name:"Your name",contact:"Phone or Telegram",date:"Start date",people:"Guests",comment:"Comment",send:"Send request",close:"Close",ok:"Request received. We will contact you soon.",err:"Something went wrong. Check the fields and try again."},
+  ru:{h1:"Откройте Кыргызстан",sub:"Маршруты по горам, озёрам и джайлоо. Оставьте заявку — мы свяжемся с вами.",cta:"Смотреть туры",adminLogin:"Админка",toursTitle:"Туры",days:"дн.",from:"от",book:"Забронировать",name:"Ваше имя",contact:"Телефон или Telegram",date:"Дата начала",people:"Человек",comment:"Комментарий",send:"Отправить заявку",close:"Закрыть",ok:"Заявка принята. Мы скоро свяжемся с вами.",err:"Ошибка. Проверьте поля и попробуйте ещё раз."},
+  es:{h1:"Descubre Kirguistán",sub:"Rutas por montañas, lagos y pastos de verano. Envía tu solicitud y te contactaremos.",cta:"Ver tours",adminLogin:"Admin",toursTitle:"Tours",days:"días",from:"desde",book:"Reservar",name:"Tu nombre",contact:"Teléfono o Telegram",date:"Fecha de inicio",people:"Personas",comment:"Comentario",send:"Enviar solicitud",close:"Cerrar",ok:"Solicitud recibida. Te contactaremos pronto.",err:"Algo salió mal. Revisa los campos e inténtalo de nuevo."}
 };
 const $ = s => document.querySelector(s);
 const TOUR_IMAGES = {

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KG Tours — вход в админку</title>
+<style>
+:root{--lake:#0E3B4F;--snow:#F6F8F9;--ink:#12242C;--mute:#5B6B72;--line:#D8E0E3}
+@media(prefers-color-scheme:dark){:root{--snow:#0C1A20;--ink:#E8EEF0;--mute:#9AABB2;--line:#223841}}
+*{box-sizing:border-box}
+body{min-height:100vh;margin:0;padding:24px;display:grid;place-items:center;background:var(--snow);color:var(--ink);font:16px/1.5 system-ui,sans-serif}
+main{width:min(420px,100%);padding:28px;border:1px solid var(--line);border-radius:14px}
+h1{margin:0 0 8px;font-size:24px}
+p{color:var(--mute)}
+label{display:block;margin:20px 0 6px;font-weight:600}
+input{width:100%;padding:11px;border:1px solid var(--line);border-radius:8px;background:transparent;color:inherit;font:inherit}
+button{width:100%;margin-top:16px;padding:12px;border:0;border-radius:8px;background:var(--lake);color:#fff;font:700 15px system-ui,sans-serif;cursor:pointer}
+a{display:inline-block;margin-top:18px;color:var(--lake)}
+#error{min-height:1.5em;color:#B83A2E}
+</style>
+</head>
+<body>
+<main>
+  <h1>Вход в админку</h1>
+  <p>Введите пароль администратора.</p>
+  <form id="login">
+    <label for="password">Пароль</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>
+    <button type="submit">Войти</button>
+  </form>
+  <p id="error" role="alert"></p>
+  <a href="/">Вернуться на сайт</a>
+</main>
+<script>
+const form = document.querySelector("#login");
+const error = document.querySelector("#error");
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = form.querySelector("button");
+  button.disabled = true;
+  error.textContent = "";
+  try {
+    const response = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({password: document.querySelector("#password").value})
+    });
+    if (!response.ok) {
+      error.textContent = response.status === 401 ? "Неверный пароль." : "Не удалось выполнить вход. Попробуйте ещё раз.";
+      return;
+    }
+    location.replace("/admin");
+  } catch {
+    error.textContent = "Не удалось подключиться. Попробуйте ещё раз.";
+  } finally {
+    button.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
